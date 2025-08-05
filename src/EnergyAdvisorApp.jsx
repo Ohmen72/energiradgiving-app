@@ -1,10 +1,7 @@
+
 import React, { useState, useEffect } from "react";
-import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Select, SelectTrigger, SelectContent, SelectItem } from "@/components/ui/select";
 import { jsPDF } from "jspdf";
-import kommuneData from "@/data/kommunestotte.json";
+import kommuneData from "./data/kommunestotte.json";
 
 export default function EnergyAdvisorApp() {
   const [kommuner, setKommuner] = useState([]);
@@ -95,68 +92,58 @@ export default function EnergyAdvisorApp() {
   };
 
   return (
-    <div className="max-w-xl mx-auto space-y-4 p-4">
-      <h1 className="text-xl font-bold">Energirådgiving</h1>
-
-      <Select onValueChange={val => handleChange("boligtype", val)}>
-        <SelectTrigger>Boligtype</SelectTrigger>
-        <SelectContent>
-          <SelectItem value="enebolig">Enebolig</SelectItem>
-          <SelectItem value="rekkehus">Rekkehus</SelectItem>
-          <SelectItem value="leilighet">Leilighet</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Input placeholder="Areal (m²)" type="number" onChange={e => handleChange("areal", e.target.value)} />
-      <Input placeholder="Byggeår" type="number" onChange={e => handleChange("byggeaar", e.target.value)} />
-      <Input placeholder="Antall personer i husstanden" type="number" onChange={e => handleChange("personer", e.target.value)} />
-
-      <Select onValueChange={val => handleChange("kommune", val)}>
-        <SelectTrigger>Kommune</SelectTrigger>
-        <SelectContent>
-          {kommuner.map(k => (
-            <SelectItem key={k} value={k}>{k}</SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
-      <Select onValueChange={val => handleChange("oppgraderinger", val)}>
-        <SelectTrigger>Har boligen blitt oppgradert?</SelectTrigger>
-        <SelectContent>
-          <SelectItem value="ja">Ja</SelectItem>
-          <SelectItem value="nei">Nei</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Select onValueChange={val => handleChange("elektriskNiva", val)}>
-        <SelectTrigger>Elektrisk forbruksnivå</SelectTrigger>
-        <SelectContent>
-          <SelectItem value="lav">Lavt</SelectItem>
-          <SelectItem value="middels">Middels</SelectItem>
-          <SelectItem value="hoy">Høyt</SelectItem>
-        </SelectContent>
-      </Select>
-
-      <Button onClick={generateReport}>Generer rapport</Button>
-
+    <div style={{ maxWidth: "600px", margin: "0 auto", padding: "1rem" }}>
+      <h1 style={{ fontSize: "1.5rem", fontWeight: "bold" }}>Energirådgiving</h1>
+      <label>Boligtype:</label>
+      <select onChange={e => handleChange("boligtype", e.target.value)}>
+        <option value="">Velg</option>
+        <option value="enebolig">Enebolig</option>
+        <option value="rekkehus">Rekkehus</option>
+        <option value="leilighet">Leilighet</option>
+      </select>
+      <br />
+      <input placeholder="Areal (m²)" type="number" onChange={e => handleChange("areal", e.target.value)} /><br />
+      <input placeholder="Byggeår" type="number" onChange={e => handleChange("byggeaar", e.target.value)} /><br />
+      <input placeholder="Antall personer i husstanden" type="number" onChange={e => handleChange("personer", e.target.value)} /><br />
+      <label>Kommune:</label>
+      <select onChange={e => handleChange("kommune", e.target.value)}>
+        <option value="">Velg kommune</option>
+        {kommuner.map(k => (
+          <option key={k} value={k}>{k}</option>
+        ))}
+      </select>
+      <br />
+      <label>Har boligen blitt oppgradert?</label>
+      <select onChange={e => handleChange("oppgraderinger", e.target.value)}>
+        <option value="nei">Nei</option>
+        <option value="ja">Ja</option>
+      </select>
+      <br />
+      <label>Elektrisk forbruksnivå:</label>
+      <select onChange={e => handleChange("elektriskNiva", e.target.value)}>
+        <option value="">Velg nivå</option>
+        <option value="lav">Lavt</option>
+        <option value="middels">Middels</option>
+        <option value="hoy">Høyt</option>
+      </select>
+      <br /><br />
+      <button onClick={generateReport}>Generer rapport</button>
       {rapport && (
-        <Card>
-          <CardContent className="space-y-2 mt-2">
-            <h2 className="text-lg font-semibold">Rapport</h2>
-            <p>Estimert årlig energiforbruk: {rapport.forbruk} kWh</p>
-            <ul className="list-disc ml-4">
-              {rapport.tiltak.map((t, i) => (
-                <li key={i}>{t.navn}: Besparelse {t.besparelse} kWh/år, Enova støtte {t.enovaStotte} kr, Kommunal støtte {t.kommuneStotte} kr</li>
-              ))}
-            </ul>
-            <p>Totalt investeringskostnad: {rapport.totalKostnad} kr</p>
-            <p>Offentlig støtte: {rapport.totalStotte} kr</p>
-            <p>Årlig besparelse: {rapport.totalBesparelse} kWh</p>
-            <p>Tilbakebetalingstid: {rapport.tilbakebetaling} år</p>
-            <Button onClick={exportToPDF}>Last ned rapport (PDF)</Button>
-          </CardContent>
-        </Card>
+        <div style={{ marginTop: "1rem", border: "1px solid #ccc", padding: "1rem" }}>
+          <h2>Rapport</h2>
+          <p>Estimert årlig energiforbruk: {rapport.forbruk} kWh</p>
+          <ul>
+            {rapport.tiltak.map((t, i) => (
+              <li key={i}>{t.navn}: Besparelse {t.besparelse} kWh/år, Enova støtte {t.enovaStotte} kr, Kommunal støtte {t.kommuneStotte} kr</li>
+            ))}
+          </ul>
+          <p>Totalt investeringskostnad: {rapport.totalKostnad} kr</p>
+          <p>Offentlig støtte: {rapport.totalStotte} kr</p>
+          <p>Årlig besparelse: {rapport.totalBesparelse} kWh</p>
+          <p>Tilbakebetalingstid: {rapport.tilbakebetaling} år</p>
+          <button onClick={exportToPDF}>Last ned rapport (PDF)</button>
+        </div>
       )}
     </div>
   );
-}  
+}
