@@ -1,0 +1,10 @@
+{
+  "Oslo": {
+    "loft": 2000,
+    "varmepumpe": 1500
+  },
+  "Bergen": {
+    "loft": 1500,
+    "varmepumpe": 1000
+  }
+}
